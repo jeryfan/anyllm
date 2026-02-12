@@ -83,33 +83,6 @@ export function Sidebar() {
           collapsed ? "w-14" : "w-56",
         )}
       >
-        {/* Header */}
-        <div className="flex h-14 shrink-0 items-center justify-between px-3">
-          {!collapsed && (
-            <span className="truncate px-1 font-semibold tracking-tight">AnyLLM</span>
-          )}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleCollapsed}
-                className="h-8 w-8 shrink-0"
-              >
-                {collapsed ? (
-                  <PanelLeftOpen className="h-4 w-4" />
-                ) : (
-                  <PanelLeftClose className="h-4 w-4" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              {collapsed ? t.sidebar.expand : t.sidebar.collapse}
-            </TooltipContent>
-          </Tooltip>
-        </div>
-        <Separator />
-
         {/* Navigation */}
         <nav className="flex flex-1 flex-col gap-1 px-2 py-2">
           {navItems.map((item) =>
@@ -170,6 +143,25 @@ export function Sidebar() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">{t.sidebar.toggleTheme}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleCollapsed}
+                  className="h-8 w-8"
+                >
+                  {collapsed ? (
+                    <PanelLeftOpen className="h-4 w-4" />
+                  ) : (
+                    <PanelLeftClose className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                {collapsed ? t.sidebar.expand : t.sidebar.collapse}
+              </TooltipContent>
             </Tooltip>
           </div>
         </div>

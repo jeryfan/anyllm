@@ -3,33 +3,56 @@ use crate::AppState;
 use serde::Serialize;
 use tauri::State;
 
+use super::PaginatedResult;
+
 #[tauri::command]
 pub async fn list_request_logs(
     state: State<'_, AppState>,
     limit: Option<i64>,
     offset: Option<i64>,
     model: Option<String>,
-) -> Result<Vec<RequestLog>, String> {
+) -> Result<PaginatedResult<RequestLog>, String> {
     let limit = limit.unwrap_or(50);
     let offset = offset.unwrap_or(0);
 
-    if let Some(model) = model {
-        sqlx::query_as::<_, RequestLog>(
+    let (items, total) = if let Some(model) = model {
+        let items = sqlx::query_as::<_, RequestLog>(
             "SELECT * FROM request_logs WHERE model = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
         )
         .bind(&model).bind(limit).bind(offset)
         .fetch_all(&state.db)
         .await
-        .map_err(|e| e.to_string())
+        .map_err(|e| e.to_string())?;
+
+        let (total,): (i64,) = sqlx::query_as(
+            "SELECT COUNT(*) FROM request_logs WHERE model = ?"
+        )
+        .bind(&model)
+        .fetch_one(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+
+        (items, total)
     } else {
-        sqlx::query_as::<_, RequestLog>(
+        let items = sqlx::query_as::<_, RequestLog>(
             "SELECT * FROM request_logs ORDER BY created_at DESC LIMIT ? OFFSET ?"
         )
         .bind(limit).bind(offset)
         .fetch_all(&state.db)
         .await
-        .map_err(|e| e.to_string())
-    }
+        .map_err(|e| e.to_string())?;
+
+        let (total,): (i64,) = sqlx::query_as(
+            "SELECT COUNT(*) FROM request_logs"
+        )
+        .fetch_one(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+
+        (items, total)
+    };
+
+    Ok(PaginatedResult { items, total })
 }
 
 #[tauri::command]

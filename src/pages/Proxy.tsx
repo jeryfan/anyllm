@@ -56,8 +56,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Pagination } from "@/components/ui/pagination";
 import {
-  type ProxyRule,
   type ProxyLog,
   listProxyRules,
   createProxyRule,
@@ -241,8 +241,9 @@ export default function Proxy() {
   // =========================================================================
 
   const [logs, setLogs] = useState<ProxyLog[]>([]);
+  const [logsTotal, setLogsTotal] = useState(0);
   const [logsLoading, setLogsLoading] = useState(true);
-  const [logsPage, setLogsPage] = useState(0);
+  const [logsPage, setLogsPage] = useState(1);
   const [ruleFilter, setRuleFilter] = useState<string>("");
   const [clearing, setClearing] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
@@ -286,13 +287,14 @@ export default function Proxy() {
       if (!silent) setLogsLoading(true);
       const params: { rule_id?: string; limit: number; offset: number } = {
         limit: PAGE_SIZE,
-        offset: logsPage * PAGE_SIZE,
+        offset: (logsPage - 1) * PAGE_SIZE,
       };
       if (ruleFilter) {
         params.rule_id = ruleFilter;
       }
-      const data = await listProxyLogs(params);
-      setLogs(data);
+      const result = await listProxyLogs(params);
+      setLogs(result.items);
+      setLogsTotal(result.total);
     } catch (err) {
       console.error("Failed to load proxy logs:", err);
       if (!silent) setLogs([]);
@@ -386,7 +388,7 @@ export default function Proxy() {
     setClearing(true);
     try {
       await clearProxyLogs(ruleFilter || undefined);
-      setLogsPage(0);
+      setLogsPage(1);
       await fetchLogs();
     } catch (err) {
       console.error("Failed to clear proxy logs:", err);
@@ -409,9 +411,6 @@ export default function Proxy() {
       setDetailLoading(false);
     }
   }
-
-  const hasNextPage = logs.length === PAGE_SIZE;
-  const hasPrevPage = logsPage > 0;
 
   // =========================================================================
   // Render
@@ -542,7 +541,7 @@ export default function Proxy() {
               value={ruleFilter}
               onValueChange={(value) => {
                 setRuleFilter(value === "__all__" ? "" : value);
-                setLogsPage(0);
+                setLogsPage(1);
               }}
             >
               <SelectTrigger className="w-[220px]">
@@ -650,29 +649,13 @@ export default function Proxy() {
 
           {/* Pagination — fixed at bottom */}
           {!logsLoading && logs.length > 0 && (
-            <div className="flex shrink-0 items-center justify-between border-t pt-3">
-              <p className="text-sm text-muted-foreground">
-                {t.common.page(logsPage + 1)}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={!hasPrevPage}
-                  onClick={() => setLogsPage((p) => Math.max(0, p - 1))}
-                >
-                  {t.common.previous}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={!hasNextPage}
-                  onClick={() => setLogsPage((p) => p + 1)}
-                >
-                  {t.common.next}
-                </Button>
-              </div>
-            </div>
+            <Pagination
+              current={logsPage}
+              total={logsTotal}
+              pageSize={PAGE_SIZE}
+              onChange={setLogsPage}
+              className="shrink-0 border-t pt-3"
+            />
           )}
         </TabsContent>
       </Tabs>

@@ -37,6 +37,7 @@ import {
   retryRequestLog,
   type RequestLog,
 } from "@/lib/tauri";
+import { Pagination } from "@/components/ui/pagination";
 import { useLanguage } from "@/lib/i18n";
 
 const PAGE_SIZE = 20;
@@ -122,10 +123,11 @@ function StatusBadge({ status }: { status: number | null }) {
 export default function RequestLogs() {
   const { t } = useLanguage();
   const [logs, setLogs] = useState<RequestLog[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [modelFilter, setModelFilter] = useState("");
   const [appliedFilter, setAppliedFilter] = useState("");
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [selectedLog, setSelectedLog] = useState<RequestLog | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -141,13 +143,14 @@ export default function RequestLogs() {
     try {
       const params: { limit: number; offset: number; model?: string } = {
         limit: PAGE_SIZE,
-        offset: page * PAGE_SIZE,
+        offset: (page - 1) * PAGE_SIZE,
       };
       if (appliedFilter.trim()) {
         params.model = appliedFilter.trim();
       }
-      const data = await listRequestLogs(params);
-      setLogs(data);
+      const result = await listRequestLogs(params);
+      setLogs(result.items);
+      setTotal(result.total);
     } catch (err) {
       console.error("Failed to fetch request logs:", err);
       setLogs([]);
@@ -172,7 +175,7 @@ export default function RequestLogs() {
   }, [autoRefresh, fetchLogs]);
 
   function handleSearch() {
-    setPage(0);
+    setPage(1);
     setAppliedFilter(modelFilter);
   }
 
@@ -186,7 +189,7 @@ export default function RequestLogs() {
     setClearing(true);
     try {
       await clearRequestLogs();
-      setPage(0);
+      setPage(1);
       setAppliedFilter("");
       setModelFilter("");
       await fetchLogs();
@@ -233,9 +236,6 @@ export default function RequestLogs() {
       console.error("Failed to copy:", err);
     }
   }
-
-  const hasNextPage = logs.length === PAGE_SIZE;
-  const hasPrevPage = page > 0;
 
   return (
     <div className="space-y-6">
@@ -387,29 +387,12 @@ export default function RequestLogs() {
           </Table>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              {t.common.page(page + 1)}
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={!hasPrevPage}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-              >
-                {t.common.previous}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={!hasNextPage}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                {t.common.next}
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            current={page}
+            total={total}
+            pageSize={PAGE_SIZE}
+            onChange={setPage}
+          />
         </>
       )}
 

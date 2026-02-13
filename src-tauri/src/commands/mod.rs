@@ -4,3 +4,9 @@ pub mod tokens;
 pub mod model_mappings;
 pub mod request_logs;
 pub mod proxy;
+
+#[derive(serde::Serialize)]
+pub struct PaginatedResult<T: serde::Serialize> {
+    pub items: Vec<T>,
+    pub total: i64,
+}

@@ -1,5 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 
+// === Shared types ===
+
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+}
+
 // === Config types ===
 
 export interface AppConfig {
@@ -330,8 +337,8 @@ export async function listRequestLogs(params?: {
   limit?: number;
   offset?: number;
   model?: string;
-}): Promise<RequestLog[]> {
-  return invoke<RequestLog[]>("list_request_logs", params ?? {});
+}): Promise<PaginatedResult<RequestLog>> {
+  return invoke<PaginatedResult<RequestLog>>("list_request_logs", params ?? {});
 }
 
 export async function getRequestLog(id: string): Promise<RequestLog | null> {
@@ -420,8 +427,8 @@ export async function listProxyLogs(params?: {
   rule_id?: string;
   limit?: number;
   offset?: number;
-}): Promise<ProxyLog[]> {
-  return invoke<ProxyLog[]>("list_proxy_logs", {
+}): Promise<PaginatedResult<ProxyLog>> {
+  return invoke<PaginatedResult<ProxyLog>>("list_proxy_logs", {
     ruleId: params?.rule_id,
     limit: params?.limit,
     offset: params?.offset,

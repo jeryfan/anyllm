@@ -2,6 +2,8 @@ use crate::db::models::{ProxyLog, ProxyRule};
 use crate::AppState;
 use tauri::State;
 
+use super::PaginatedResult;
+
 #[tauri::command]
 pub async fn list_proxy_rules(state: State<'_, AppState>) -> Result<Vec<ProxyRule>, String> {
     sqlx::query_as::<_, ProxyRule>("SELECT * FROM proxy_rules ORDER BY created_at DESC")
@@ -86,27 +88,48 @@ pub async fn list_proxy_logs(
     rule_id: Option<String>,
     limit: Option<i64>,
     offset: Option<i64>,
-) -> Result<Vec<ProxyLog>, String> {
+) -> Result<PaginatedResult<ProxyLog>, String> {
     let limit = limit.unwrap_or(50);
     let offset = offset.unwrap_or(0);
 
-    if let Some(rule_id) = rule_id {
-        sqlx::query_as::<_, ProxyLog>(
+    let (items, total) = if let Some(rule_id) = rule_id {
+        let items = sqlx::query_as::<_, ProxyLog>(
             "SELECT * FROM proxy_logs WHERE rule_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
         )
         .bind(&rule_id).bind(limit).bind(offset)
         .fetch_all(&state.db)
         .await
-        .map_err(|e| e.to_string())
+        .map_err(|e| e.to_string())?;
+
+        let (total,): (i64,) = sqlx::query_as(
+            "SELECT COUNT(*) FROM proxy_logs WHERE rule_id = ?"
+        )
+        .bind(&rule_id)
+        .fetch_one(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+
+        (items, total)
     } else {
-        sqlx::query_as::<_, ProxyLog>(
+        let items = sqlx::query_as::<_, ProxyLog>(
             "SELECT * FROM proxy_logs ORDER BY created_at DESC LIMIT ? OFFSET ?"
         )
         .bind(limit).bind(offset)
         .fetch_all(&state.db)
         .await
-        .map_err(|e| e.to_string())
-    }
+        .map_err(|e| e.to_string())?;
+
+        let (total,): (i64,) = sqlx::query_as(
+            "SELECT COUNT(*) FROM proxy_logs"
+        )
+        .fetch_one(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+
+        (items, total)
+    };
+
+    Ok(PaginatedResult { items, total })
 }
 
 #[tauri::command]

@@ -28,6 +28,8 @@ export interface Translations {
     previous: string;
     next: string;
     page: (n: number) => string;
+    pageInfo: (current: number, total: number) => string;
+    totalItems: (n: number) => string;
     all: string;
     unnamed: string;
     unknownError: string;
@@ -354,6 +356,8 @@ const en: Translations = {
     previous: "Previous",
     next: "Next",
     page: (n: number) => `Page ${n}`,
+    pageInfo: (current: number, total: number) => `Page ${current} / ${total}`,
+    totalItems: (n: number) => `${n} items total`,
     all: "All",
     unnamed: "Unnamed",
     unknownError: "Unknown error",
@@ -677,6 +681,8 @@ const zh: Translations = {
     previous: "上一页",
     next: "下一页",
     page: (n: number) => `第 ${n} 页`,
+    pageInfo: (current: number, total: number) => `第 ${current} / ${total} 页`,
+    totalItems: (n: number) => `共 ${n} 条`,
     all: "全部",
     unnamed: "未命名",
     unknownError: "未知错误",

@@ -1,12 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#6366f1"/>
-      <stop offset="100%" style="stop-color:#a855f7"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#a855f7"/>
     </linearGradient>
   </defs>
-  <rect width="1024" height="1024" rx="220" ry="220" fill="url(#bg)"/>
-  <text x="512" y="540" text-anchor="middle" dominant-baseline="central"
-        font-family="Arial, Helvetica, sans-serif" font-weight="bold"
-        font-size="620" fill="white" letter-spacing="-20">A</text>
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+
+  <!-- Left input lines converging to hub -->
+  <line x1="190" y1="330" x2="410" y2="462" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <line x1="190" y1="512" x2="388" y2="512" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <line x1="190" y1="694" x2="410" y2="562" stroke="white" stroke-width="52" stroke-linecap="round"/>
+
+  <!-- Right output lines diverging from hub -->
+  <line x1="614" y1="462" x2="834" y2="330" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <line x1="636" y1="512" x2="834" y2="512" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <line x1="614" y1="562" x2="834" y2="694" stroke="white" stroke-width="52" stroke-linecap="round"/>
+
+  <!-- Central hub diamond -->
+  <rect x="427" y="427" width="170" height="170" rx="24" transform="rotate(45 512 512)" fill="white"/>
 </svg>

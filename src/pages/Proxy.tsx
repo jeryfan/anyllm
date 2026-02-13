@@ -418,18 +418,18 @@ export default function Proxy() {
   // =========================================================================
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
+    <div className="flex h-[calc(100vh-3rem)] flex-col">
+      {/* Header — fixed */}
+      <div className="shrink-0 pb-4">
         <h1 className="text-2xl font-bold">{t.proxy.title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {t.proxy.subtitle}
         </p>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="rules">
-        <TabsList>
+      {/* Tabs — fills remaining space */}
+      <Tabs defaultValue="rules" className="flex min-h-0 flex-1 flex-col">
+        <TabsList className="shrink-0">
           <TabsTrigger value="rules">{t.proxy.rules}</TabsTrigger>
           <TabsTrigger value="logs">{t.proxy.logs}</TabsTrigger>
         </TabsList>
@@ -437,105 +437,107 @@ export default function Proxy() {
         {/* =============================================================== */}
         {/* Rules Tab                                                        */}
         {/* =============================================================== */}
-        <TabsContent value="rules" className="space-y-4">
-          {/* Rules toolbar */}
-          <div className="flex items-center justify-end">
+        <TabsContent value="rules" className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden">
+          {/* Rules toolbar — fixed */}
+          <div className="flex shrink-0 items-center justify-end">
             <Button onClick={openAddDialog}>
               <Plus className="size-4" />
               {t.proxy.addRule}
             </Button>
           </div>
 
-          {/* Rules table */}
-          {rulesLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
-              <span className="ml-2 text-muted-foreground">{t.common.loading}</span>
-            </div>
-          ) : rules.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
-              <p className="text-muted-foreground">{t.proxy.noRules}</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t.proxy.noRulesHint}
-              </p>
-              <Button variant="outline" className="mt-4" onClick={openAddDialog}>
-                <Plus className="size-4" />
-                {t.proxy.addRule}
-              </Button>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t.common.name}</TableHead>
-                  <TableHead>{t.proxy.pathPrefix}</TableHead>
-                  <TableHead>{t.proxy.targetBaseUrl}</TableHead>
-                  <TableHead>{t.proxy.usage}</TableHead>
-                  <TableHead className="text-center">{t.common.status}</TableHead>
-                  <TableHead className="text-right">{t.common.actions}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rules.map((rule) => (
-                  <TableRow key={rule.id}>
-                    <TableCell className="font-medium">
-                      {rule.name || t.common.unnamed}
-                    </TableCell>
-                    <TableCell>
-                      <code className="text-sm font-mono">{rule.path_prefix}</code>
-                    </TableCell>
-                    <TableCell className="max-w-[260px] truncate text-muted-foreground">
-                      {rule.target_base_url}
-                    </TableCell>
-                    <TableCell>
-                      <code className="text-xs font-mono text-muted-foreground">
-                        http://127.0.0.1:{serverPort ?? "..."}{rule.path_prefix}
-                      </code>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {rule.enabled ? (
-                        <Badge className="bg-green-600 text-white">{t.common.enabled}</Badge>
-                      ) : (
-                        <Badge variant="secondary">{t.common.disabled}</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon-sm">
-                            <MoreHorizontal className="size-4" />
-                            <span className="sr-only">{t.common.actions}</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEditDialog(rule)}>
-                            <Pencil className="size-4" />
-                            {t.common.edit}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onClick={() => setDeleteTarget(rule)}
-                          >
-                            <Trash2 className="size-4" />
-                            {t.common.delete}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+          {/* Rules table — scrollable */}
+          <div className="min-h-0 flex-1 overflow-auto">
+            {rulesLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">{t.common.loading}</span>
+              </div>
+            ) : rules.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
+                <p className="text-muted-foreground">{t.proxy.noRules}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t.proxy.noRulesHint}
+                </p>
+                <Button variant="outline" className="mt-4" onClick={openAddDialog}>
+                  <Plus className="size-4" />
+                  {t.proxy.addRule}
+                </Button>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t.common.name}</TableHead>
+                    <TableHead>{t.proxy.pathPrefix}</TableHead>
+                    <TableHead>{t.proxy.targetBaseUrl}</TableHead>
+                    <TableHead>{t.proxy.usage}</TableHead>
+                    <TableHead className="text-center">{t.common.status}</TableHead>
+                    <TableHead className="text-right">{t.common.actions}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                </TableHeader>
+                <TableBody>
+                  {rules.map((rule) => (
+                    <TableRow key={rule.id}>
+                      <TableCell className="font-medium">
+                        {rule.name || t.common.unnamed}
+                      </TableCell>
+                      <TableCell>
+                        <code className="text-sm font-mono">{rule.path_prefix}</code>
+                      </TableCell>
+                      <TableCell className="max-w-[260px] truncate text-muted-foreground">
+                        {rule.target_base_url}
+                      </TableCell>
+                      <TableCell>
+                        <code className="text-xs font-mono text-muted-foreground">
+                          http://127.0.0.1:{serverPort ?? "..."}{rule.path_prefix}
+                        </code>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {rule.enabled ? (
+                          <Badge className="bg-green-600 text-white">{t.common.enabled}</Badge>
+                        ) : (
+                          <Badge variant="secondary">{t.common.disabled}</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon-sm">
+                              <MoreHorizontal className="size-4" />
+                              <span className="sr-only">{t.common.actions}</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => openEditDialog(rule)}>
+                              <Pencil className="size-4" />
+                              {t.common.edit}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => setDeleteTarget(rule)}
+                            >
+                              <Trash2 className="size-4" />
+                              {t.common.delete}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
         </TabsContent>
 
         {/* =============================================================== */}
         {/* Logs Tab                                                         */}
         {/* =============================================================== */}
-        <TabsContent value="logs" className="space-y-4">
-          {/* Logs toolbar */}
-          <div className="flex items-center gap-2">
+        <TabsContent value="logs" className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden">
+          {/* Logs toolbar — fixed */}
+          <div className="flex shrink-0 items-center gap-2">
             <Select
               value={ruleFilter}
               onValueChange={(value) => {
@@ -582,19 +584,19 @@ export default function Proxy() {
             </Button>
           </div>
 
-          {/* Logs table */}
-          {logsLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
-              <span className="ml-2 text-muted-foreground">{t.common.loading}</span>
-            </div>
-          ) : logs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-              <p className="text-lg font-medium">{t.proxy.noLogs}</p>
-              <p className="mt-1 text-sm">{t.proxy.noLogsHint}</p>
-            </div>
-          ) : (
-            <>
+          {/* Logs table — scrollable */}
+          <div className="min-h-0 flex-1 overflow-auto">
+            {logsLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">{t.common.loading}</span>
+              </div>
+            ) : logs.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                <p className="text-lg font-medium">{t.proxy.noLogs}</p>
+                <p className="mt-1 text-sm">{t.proxy.noLogsHint}</p>
+              </div>
+            ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -643,32 +645,34 @@ export default function Proxy() {
                   ))}
                 </TableBody>
               </Table>
+            )}
+          </div>
 
-              {/* Pagination */}
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  {t.common.page(logsPage + 1)}
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={!hasPrevPage}
-                    onClick={() => setLogsPage((p) => Math.max(0, p - 1))}
-                  >
-                    {t.common.previous}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={!hasNextPage}
-                    onClick={() => setLogsPage((p) => p + 1)}
-                  >
-                    {t.common.next}
-                  </Button>
-                </div>
+          {/* Pagination — fixed at bottom */}
+          {!logsLoading && logs.length > 0 && (
+            <div className="flex shrink-0 items-center justify-between border-t pt-3">
+              <p className="text-sm text-muted-foreground">
+                {t.common.page(logsPage + 1)}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={!hasPrevPage}
+                  onClick={() => setLogsPage((p) => Math.max(0, p - 1))}
+                >
+                  {t.common.previous}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={!hasNextPage}
+                  onClick={() => setLogsPage((p) => p + 1)}
+                >
+                  {t.common.next}
+                </Button>
               </div>
-            </>
+            </div>
           )}
         </TabsContent>
       </Tabs>

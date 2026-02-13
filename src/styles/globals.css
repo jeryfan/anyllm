@@ -72,11 +72,13 @@
   html,
   body {
     @apply h-full;
+    overscroll-behavior: none;
   }
   #root {
     @apply h-full overflow-hidden;
   }
   body {
     @apply bg-background text-foreground;
+    overflow: hidden;
   }
 }

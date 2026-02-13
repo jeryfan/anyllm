@@ -6,7 +6,6 @@ import {
   ArrowRightLeft,
   KeyRound,
   ScrollText,
-  BarChart3,
   Waypoints,
   Settings,
   Sun,
@@ -55,7 +54,6 @@ export function Sidebar() {
     { to: "/model-mappings", icon: ArrowRightLeft, label: t.sidebar.modelMappings },
     { to: "/tokens", icon: KeyRound, label: t.sidebar.tokens },
     { to: "/request-logs", icon: ScrollText, label: t.sidebar.requestLogs },
-    { to: "/usage-stats", icon: BarChart3, label: t.sidebar.usageStats },
     { to: "/proxy", icon: Waypoints, label: t.sidebar.proxy },
   ];
 

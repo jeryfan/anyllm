@@ -1,7 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
   getConfig,
-  getServerStatus,
   listChannels,
   listTokens,
   listModelMappings,
@@ -9,7 +8,6 @@ import {
 } from "@/lib/tauri";
 import type {
   AppConfig,
-  ServerStatus,
   Channel,
   Token,
   ModelMapping,
@@ -22,21 +20,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Activity,
   Network,
   KeyRound,
   ArrowRightLeft,
-  Server,
-  BookOpen,
-  Copy,
-  Check,
 } from "lucide-react";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip as RechartsTooltip,
@@ -47,7 +39,6 @@ import { useLanguage } from "@/lib/i18n";
 
 interface DashboardData {
   config: AppConfig;
-  serverStatus: ServerStatus;
   channels: Channel[];
   tokens: Token[];
   modelMappings: ModelMapping[];
@@ -84,135 +75,6 @@ function ChartSkeleton() {
   );
 }
 
-function ServerStatusSkeleton() {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="h-5 w-32 animate-pulse rounded bg-muted" />
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-6">
-          <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function useCopyToClipboard() {
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
-
-  const copy = useCallback((text: string, key: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopiedKey(key);
-      setTimeout(() => setCopiedKey(null), 2000);
-    });
-  }, []);
-
-  return { copiedKey, copy };
-}
-
-function QuickStartCard({ port }: { port: number }) {
-  const { t } = useLanguage();
-  const { copiedKey, copy } = useCopyToClipboard();
-
-  const proxyUrl = `http://localhost:${port}`;
-  const curlCmd = `curl ${proxyUrl}/v1/chat/completions \\
-  -H "Authorization: Bearer YOUR_TOKEN" \\
-  -H "Content-Type: application/json" \\
-  -d '{"model":"gpt-4o","messages":[{"role":"user","content":"Hello"}]}'`;
-
-  const steps = [t.dashboard.step1, t.dashboard.step2, t.dashboard.step3, t.dashboard.step4];
-
-  const endpoints = [
-    { path: "POST /v1/chat/completions", desc: "OpenAI Chat" },
-    { path: "POST /v1/messages", desc: "Anthropic" },
-    { path: "POST /v1/responses", desc: "OpenAI Responses" },
-  ];
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-muted-foreground" />
-          <CardTitle>{t.dashboard.quickStart}</CardTitle>
-        </div>
-        <CardDescription>{t.dashboard.quickStartDesc}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Steps */}
-        <ol className="space-y-2">
-          {steps.map((step, i) => (
-            <li key={i} className="flex items-start gap-3">
-              <Badge variant="secondary" className="mt-0.5 h-6 w-6 shrink-0 rounded-full p-0 text-xs flex items-center justify-center">
-                {i + 1}
-              </Badge>
-              <span className="text-sm">{step}</span>
-            </li>
-          ))}
-        </ol>
-
-        {/* Proxy Endpoint */}
-        <div className="space-y-1.5">
-          <h4 className="text-sm font-medium">{t.dashboard.proxyEndpoint}</h4>
-          <div className="flex items-center gap-2">
-            <code className="font-mono text-lg font-semibold">{proxyUrl}</code>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => copy(proxyUrl, "proxy")}
-            >
-              {copiedKey === "proxy" ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Available Endpoints */}
-        <div className="space-y-1.5">
-          <h4 className="text-sm font-medium">{t.dashboard.availableEndpoints}</h4>
-          <div className="space-y-1">
-            {endpoints.map((ep) => (
-              <div key={ep.path} className="flex items-center gap-2 font-mono text-sm">
-                <span>{ep.path}</span>
-                <span className="text-muted-foreground">— {ep.desc}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* curl Example */}
-        <div className="space-y-1.5">
-          <h4 className="text-sm font-medium">{t.dashboard.curlExample}</h4>
-          <div className="relative">
-            <pre className="overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm">
-              {curlCmd}
-            </pre>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-2 h-8 w-8"
-              onClick={() => copy(curlCmd, "curl")}
-            >
-              {copiedKey === "curl" ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default function Dashboard() {
   const { t } = useLanguage();
   const [data, setData] = useState<DashboardData | null>(null);
@@ -221,14 +83,13 @@ export default function Dashboard() {
   useEffect(() => {
     Promise.all([
       getConfig(),
-      getServerStatus(),
       listChannels(),
       listTokens(),
       listModelMappings(),
       getUsageStats(7),
     ])
-      .then(([config, serverStatus, channels, tokens, modelMappings, usageStats]) => {
-        setData({ config, serverStatus, channels, tokens, modelMappings, usageStats });
+      .then(([config, channels, tokens, modelMappings, usageStats]) => {
+        setData({ config, channels, tokens, modelMappings, usageStats });
       })
       .catch((err) => {
         setError(String(err));
@@ -325,45 +186,6 @@ export default function Dashboard() {
             })}
       </div>
 
-      {/* Server status */}
-      {!data ? (
-        <ServerStatusSkeleton />
-      ) : (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Server className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>{t.dashboard.serverStatus}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{t.dashboard.port}:</span>
-                <span className="text-sm font-medium">{data.config.server_port}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{t.common.status}:</span>
-                <Badge
-                  variant={data.serverStatus.status === "ok" ? "default" : "destructive"}
-                >
-                  {data.serverStatus.status}
-                </Badge>
-              </div>
-              {data.serverStatus.version && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">{t.dashboard.version}:</span>
-                  <span className="text-sm font-medium">{data.serverStatus.version}</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Quick Start */}
-      {data && <QuickStartCard port={data.config.server_port} />}
-
       {/* Request trend chart */}
       {!data ? (
         <ChartSkeleton />
@@ -380,19 +202,27 @@ export default function Dashboard() {
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <AreaChart data={chartData}>
+                  <defs>
+                    <linearGradient id="gradientRequests" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(221 83% 53%)" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="hsl(221 83% 53%)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                   <XAxis
                     dataKey="date"
                     tickLine={false}
                     axisLine={false}
                     fontSize={12}
+                    stroke="hsl(var(--muted-foreground))"
                   />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
                     fontSize={12}
                     allowDecimals={false}
+                    stroke="hsl(var(--muted-foreground))"
                   />
                   <RechartsTooltip
                     contentStyle={{
@@ -400,15 +230,20 @@ export default function Dashboard() {
                       border: "1px solid hsl(var(--border))",
                       backgroundColor: "hsl(var(--popover))",
                       color: "hsl(var(--popover-foreground))",
+                      fontSize: "13px",
                     }}
                   />
-                  <Bar
+                  <Area
+                    type="monotone"
                     dataKey="requests"
                     name="Requests"
-                    fill="hsl(var(--chart-1))"
-                    radius={[4, 4, 0, 0]}
+                    stroke="hsl(221 83% 53%)"
+                    strokeWidth={2}
+                    fill="url(#gradientRequests)"
+                    dot={{ r: 3, fill: "hsl(221 83% 53%)", strokeWidth: 0 }}
+                    activeDot={{ r: 5, fill: "hsl(221 83% 53%)", strokeWidth: 2, stroke: "#fff" }}
                   />
-                </BarChart>
+                </AreaChart>
               </ResponsiveContainer>
             )}
           </CardContent>

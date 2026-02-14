@@ -87,23 +87,40 @@ jobs:
         id: version
         run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
-      - name: Publish draft release
+      - name: Publish draft release and compute SHA-256
+        id: sha
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          VERSION=${{ steps.version.outputs.version }}
+
+          # Find and publish the draft release
           RELEASE_ID=$(gh api repos/${{ github.repository }}/releases --jq '.[] | select(.draft==true and .tag_name=="${{ github.ref_name }}") | .id')
-          if [ -n "$RELEASE_ID" ]; then
-            gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID -f draft=false
+          if [ -z "$RELEASE_ID" ]; then
+            RELEASE_ID=$(gh api repos/${{ github.repository }}/releases --jq '.[] | select(.tag_name=="${{ github.ref_name }}") | .id')
           fi
 
-      - name: Download DMGs and compute SHA-256
-        id: sha
-        run: |
-          VERSION=${{ steps.version.outputs.version }}
-          curl -sL "https://github.com/${{ github.repository }}/releases/download/v${VERSION}/AnyLLM_${VERSION}_aarch64.dmg" -o arm.dmg
-          curl -sL "https://github.com/${{ github.repository }}/releases/download/v${VERSION}/AnyLLM_${VERSION}_x64.dmg" -o intel.dmg
-          echo "arm=$(sha256sum arm.dmg | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
-          echo "intel=$(sha256sum intel.dmg | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          # Download assets via GitHub API (works immediately, no propagation delay)
+          ARM_ASSET_URL=$(gh api repos/${{ github.repository }}/releases/$RELEASE_ID/assets --jq '.[] | select(.name=="AnyLLM_'"${VERSION}"'_aarch64.dmg") | .url')
+          INTEL_ASSET_URL=$(gh api repos/${{ github.repository }}/releases/$RELEASE_ID/assets --jq '.[] | select(.name=="AnyLLM_'"${VERSION}"'_x64.dmg") | .url')
+
+          curl -sL -H "Authorization: token $GH_TOKEN" -H "Accept: application/octet-stream" "$ARM_ASSET_URL" -o arm.dmg
+          curl -sL -H "Authorization: token $GH_TOKEN" -H "Accept: application/octet-stream" "$INTEL_ASSET_URL" -o intel.dmg
+
+          ARM_SHA=$(sha256sum arm.dmg | cut -d' ' -f1)
+          INTEL_SHA=$(sha256sum intel.dmg | cut -d' ' -f1)
+
+          # Verify they are different (sanity check)
+          if [ "$ARM_SHA" = "$INTEL_SHA" ]; then
+            echo "::error::ARM and Intel SHA-256 are identical, something went wrong"
+            exit 1
+          fi
+
+          echo "arm=$ARM_SHA" >> "$GITHUB_OUTPUT"
+          echo "intel=$INTEL_SHA" >> "$GITHUB_OUTPUT"
+
+          # Publish draft release after successful download
+          gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID -f draft=false
 
       - name: Update Homebrew Cask
         env:

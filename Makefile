@@ -82,7 +82,7 @@ clean-rs: ## Clean Rust build artifacts only
 # === Database ===
 
 db-path: ## Show the database file path (macOS)
-	@echo "$$HOME/Library/Application Support/com.omnikit.app/omnikit.db"
+	@echo "$$HOME/Library/Application Support/com.omnikit.desktop/omnikit.db"
 
 # === Info ===
 

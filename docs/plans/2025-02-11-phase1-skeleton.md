@@ -329,7 +329,7 @@ fn main() {
 {
   "productName": "OmniKit",
   "version": "0.1.0",
-  "identifier": "com.omnikit.app",
+  "identifier": "com.omnikit.desktop",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -917,7 +917,7 @@ pub fn run() {
 pnpm tauri dev
 # Expected: App launches without errors
 # Check that database file was created:
-ls ~/Library/Application\ Support/com.omnikit.app/omnikit.db
+ls ~/Library/Application\ Support/com.omnikit.desktop/omnikit.db
 # Expected: file exists
 ```
 

@@ -9,7 +9,7 @@
   --color-brand-muted: hsl(230 70% 96%);
 
   /* Warm neutrals — shifted from cold 240 to warmer 220 */
-  --color-background: hsl(220 20% 99%);
+  --color-background: hsl(220 20% 98.5%);
   --color-foreground: hsl(220 14% 10%);
   --color-card: hsl(0 0% 100%);
   --color-card-foreground: hsl(220 14% 10%);
@@ -55,17 +55,17 @@
     --color-brand-foreground: hsl(0 0% 100%);
     --color-brand-muted: hsl(230 30% 15%);
 
-    --color-background: hsl(220 14% 6%);
+    --color-background: hsl(220 14% 5%);
     --color-foreground: hsl(220 10% 95%);
-    --color-card: hsl(220 14% 8%);
+    --color-card: hsl(220 14% 7%);
     --color-card-foreground: hsl(220 10% 95%);
     --color-popover: hsl(220 14% 8%);
     --color-popover-foreground: hsl(220 10% 95%);
     --color-primary: hsl(230 70% 65%);
     --color-primary-foreground: hsl(0 0% 100%);
-    --color-secondary: hsl(220 10% 14%);
+    --color-secondary: hsl(220 10% 12%);
     --color-secondary-foreground: hsl(220 10% 95%);
-    --color-muted: hsl(220 10% 14%);
+    --color-muted: hsl(220 10% 12%);
     --color-muted-foreground: hsl(220 8% 56%);
     --color-accent: hsl(220 10% 14%);
     --color-accent-foreground: hsl(220 10% 95%);
@@ -81,7 +81,7 @@
     --color-sidebar-primary-foreground: hsl(0 0% 100%);
     --color-sidebar-accent: hsl(230 30% 14%);
     --color-sidebar-accent-foreground: hsl(230 70% 75%);
-    --color-sidebar-border: hsl(220 10% 14%);
+    --color-sidebar-border: hsl(220 10% 12%);
     --color-sidebar-ring: hsl(230 70% 65%);
 
     --color-chart-1: hsl(230 70% 65%);
@@ -109,6 +109,13 @@
   body {
     @apply bg-background text-foreground;
     overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  /* Allow text selection in interactive/content areas */
+  input, textarea, [contenteditable="true"], pre, code, .code-block, .select-text {
+    user-select: text;
+    -webkit-user-select: text;
   }
 }
 
@@ -117,25 +124,66 @@
   .card-elevated {
     box-shadow:
       0 0 0 1px hsl(220 13% 91% / 0.7),
-      0 1px 3px hsl(220 14% 10% / 0.04),
-      0 4px 12px hsl(220 14% 10% / 0.03);
+      0 1px 2px hsl(220 14% 10% / 0.03),
+      0 4px 8px hsl(220 14% 10% / 0.03),
+      0 8px 24px hsl(220 14% 10% / 0.02);
   }
   .dark .card-elevated {
     box-shadow:
       0 0 0 1px hsl(220 10% 16% / 0.8),
-      0 1px 3px hsl(0 0% 0% / 0.2),
-      0 4px 12px hsl(0 0% 0% / 0.15);
+      0 1px 2px hsl(0 0% 0% / 0.15),
+      0 4px 8px hsl(0 0% 0% / 0.15),
+      0 8px 24px hsl(0 0% 0% / 0.1);
   }
 
   .table-wrapper {
     @apply rounded-xl border bg-card overflow-hidden;
     box-shadow:
-      0 1px 2px hsl(220 14% 10% / 0.03),
-      0 2px 8px hsl(220 14% 10% / 0.02);
+      0 1px 2px hsl(220 14% 10% / 0.02),
+      0 2px 6px hsl(220 14% 10% / 0.015);
   }
   .dark .table-wrapper {
     box-shadow:
-      0 1px 2px hsl(0 0% 0% / 0.15),
-      0 2px 8px hsl(0 0% 0% / 0.1);
+      0 1px 2px hsl(0 0% 0% / 0.12),
+      0 2px 6px hsl(0 0% 0% / 0.08);
+  }
+
+  .shadow-popover {
+    box-shadow:
+      0 0 0 1px hsl(220 13% 91% / 0.6),
+      0 4px 12px hsl(220 14% 10% / 0.08),
+      0 8px 24px hsl(220 14% 10% / 0.06),
+      0 16px 48px hsl(220 14% 10% / 0.04);
+  }
+  .dark .shadow-popover {
+    box-shadow:
+      0 0 0 1px hsl(220 10% 16% / 0.8),
+      0 4px 12px hsl(0 0% 0% / 0.3),
+      0 8px 24px hsl(0 0% 0% / 0.25),
+      0 16px 48px hsl(0 0% 0% / 0.2);
+  }
+
+  .code-block {
+    @apply rounded-lg border bg-muted/40 p-4 text-xs font-mono leading-relaxed overflow-auto whitespace-pre-wrap break-all;
+  }
+  .dark .code-block {
+    @apply bg-muted/20;
+  }
+}
+
+@keyframes fadeInSubtle {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-in-subtle {
+    animation: fadeInSubtle 0.2s ease-out both;
   }
 }

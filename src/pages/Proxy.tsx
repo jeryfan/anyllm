@@ -9,9 +9,9 @@ import {
   MoreHorizontal,
   Copy,
   Check,
+  Waypoints,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -72,6 +72,9 @@ import {
 import { useLanguage } from "@/lib/i18n";
 import { toast } from "sonner";
 import { parseIpcError } from "@/lib/tauri";
+import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
+import { EnabledBadge, HttpStatusBadge, MethodBadge as SharedMethodBadge } from "@/components/status-badge";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -109,53 +112,9 @@ function prettyJson(raw: string | null): string {
   }
 }
 
-function MethodBadge({ method }: { method: string }) {
-  const upper = method.toUpperCase();
-  const colorMap: Record<string, string> = {
-    GET: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    POST: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    PUT: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
-    DELETE: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-    PATCH: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  };
-  const color = colorMap[upper] ?? "bg-muted text-muted-foreground";
-  return <Badge className={color}>{upper}</Badge>;
-}
+// Local MethodBadge removed — using SharedMethodBadge from @/components/status-badge
 
-function StatusBadge({ status }: { status: number | null }) {
-  if (status === null || status === undefined) {
-    return (
-      <Badge variant="secondary" className="bg-muted text-muted-foreground">
-        N/A
-      </Badge>
-    );
-  }
-  if (status >= 200 && status < 300) {
-    return (
-      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-        {status}
-      </Badge>
-    );
-  }
-  if (status >= 300 && status < 400) {
-    return (
-      <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-        {status}
-      </Badge>
-    );
-  }
-  if (status >= 400 && status < 500) {
-    return (
-      <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">
-        {status}
-      </Badge>
-    );
-  }
-  if (status >= 500) {
-    return <Badge variant="destructive">{status}</Badge>;
-  }
-  return <Badge variant="outline">{status}</Badge>;
-}
+// Local StatusBadge removed — using HttpStatusBadge from @/components/status-badge
 
 // ---------------------------------------------------------------------------
 // Clipboard helper for URL copy
@@ -423,10 +382,7 @@ export default function Proxy() {
     <div className="flex h-[calc(100vh-3rem)] flex-col">
       {/* Header — fixed */}
       <div className="shrink-0 pb-4">
-        <h1 className="text-2xl font-semibold tracking-tight">{t.proxy.title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t.proxy.subtitle}
-        </p>
+        <PageHeader title={t.proxy.title} description={t.proxy.subtitle} />
       </div>
 
       {/* Tabs — fills remaining space */}
@@ -456,17 +412,19 @@ export default function Proxy() {
                 <span className="ml-2 text-muted-foreground">{t.common.loading}</span>
               </div>
             ) : rules.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16">
-                <p className="text-muted-foreground">{t.proxy.noRules}</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {t.proxy.noRulesHint}
-                </p>
-                <Button variant="outline" className="mt-4" onClick={openAddDialog}>
-                  <Plus className="size-4" />
-                  {t.proxy.addRule}
-                </Button>
-              </div>
+              <EmptyState
+                icon={Waypoints}
+                title={t.proxy.noRules}
+                description={t.proxy.noRulesHint}
+                action={
+                  <Button variant="outline" onClick={openAddDialog}>
+                    <Plus className="size-4" />
+                    {t.proxy.addRule}
+                  </Button>
+                }
+              />
             ) : (
+              <div className="table-wrapper">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -496,11 +454,7 @@ export default function Proxy() {
                         </code>
                       </TableCell>
                       <TableCell className="text-center">
-                        {rule.enabled ? (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">{t.common.enabled}</Badge>
-                        ) : (
-                          <Badge variant="secondary">{t.common.disabled}</Badge>
-                        )}
+                        <EnabledBadge enabled={rule.enabled} enabledText={t.common.enabled} disabledText={t.common.disabled} />
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
@@ -530,6 +484,7 @@ export default function Proxy() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             )}
           </div>
         </TabsContent>
@@ -599,6 +554,7 @@ export default function Proxy() {
                 <p className="mt-1 text-sm">{t.proxy.noLogsHint}</p>
               </div>
             ) : (
+              <div className="table-wrapper">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -617,7 +573,7 @@ export default function Proxy() {
                         {formatDatetime(log.created_at)}
                       </TableCell>
                       <TableCell>
-                        <MethodBadge method={log.method} />
+                        <SharedMethodBadge method={log.method} />
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1 max-w-[280px]">
@@ -628,7 +584,7 @@ export default function Proxy() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <StatusBadge status={log.status} />
+                        <HttpStatusBadge status={log.status} />
                       </TableCell>
                       <TableCell className="tabular-nums">
                         {formatLatency(log.latency_ms)}
@@ -647,6 +603,7 @@ export default function Proxy() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             )}
           </div>
 
@@ -827,8 +784,8 @@ export default function Proxy() {
             <DialogDescription>
               {selectedLog && (
                 <span className="inline-flex items-center gap-2">
-                  <MethodBadge method={selectedLog.method} />
-                  <StatusBadge status={selectedLog.status} />
+                  <SharedMethodBadge method={selectedLog.method} />
+                  <HttpStatusBadge status={selectedLog.status} />
                   <span className="font-mono text-xs">{selectedLog.url}</span>
                 </span>
               )}
@@ -847,13 +804,13 @@ export default function Proxy() {
                 <div>
                   <span className="text-muted-foreground">{t.proxy.method}</span>
                   <div className="mt-0.5">
-                    <MethodBadge method={selectedLog.method} />
+                    <SharedMethodBadge method={selectedLog.method} />
                   </div>
                 </div>
                 <div>
                   <span className="text-muted-foreground">{t.common.status}</span>
                   <div className="mt-0.5">
-                    <StatusBadge status={selectedLog.status} />
+                    <HttpStatusBadge status={selectedLog.status} />
                   </div>
                 </div>
                 <div>
@@ -885,22 +842,22 @@ export default function Proxy() {
                   <TabsTrigger value="res-body">{t.proxy.responseBody}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="req-headers" className="overflow-auto max-h-[40vh]">
-                  <pre className="rounded-md bg-muted p-4 text-xs leading-relaxed overflow-auto whitespace-pre-wrap break-all">
+                  <pre className="code-block">
                     {prettyJson(selectedLog.request_headers) || "(empty)"}
                   </pre>
                 </TabsContent>
                 <TabsContent value="req-body" className="overflow-auto max-h-[40vh]">
-                  <pre className="rounded-md bg-muted p-4 text-xs leading-relaxed overflow-auto whitespace-pre-wrap break-all">
+                  <pre className="code-block">
                     {prettyJson(selectedLog.request_body) || "(empty)"}
                   </pre>
                 </TabsContent>
                 <TabsContent value="res-headers" className="overflow-auto max-h-[40vh]">
-                  <pre className="rounded-md bg-muted p-4 text-xs leading-relaxed overflow-auto whitespace-pre-wrap break-all">
+                  <pre className="code-block">
                     {prettyJson(selectedLog.response_headers) || "(empty)"}
                   </pre>
                 </TabsContent>
                 <TabsContent value="res-body" className="overflow-auto max-h-[40vh]">
-                  <pre className="rounded-md bg-muted p-4 text-xs leading-relaxed overflow-auto whitespace-pre-wrap break-all">
+                  <pre className="code-block">
                     {prettyJson(selectedLog.response_body) || "(empty)"}
                   </pre>
                 </TabsContent>

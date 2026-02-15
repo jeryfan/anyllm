@@ -86,6 +86,9 @@ import {
 import { toast } from "sonner";
 import { parseIpcError } from "@/lib/tauri";
 import { useLanguage } from "@/lib/i18n";
+import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
+import { EnabledBadge } from "@/components/status-badge";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -523,18 +526,16 @@ export default function Channels() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.channels.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t.channels.subtitle}
-          </p>
-        </div>
-        <Button onClick={openAddDialog}>
-          <Plus className="size-4" />
-          {t.channels.addChannel}
-        </Button>
-      </div>
+      <PageHeader
+        title={t.channels.title}
+        description={t.channels.subtitle}
+        actions={
+          <Button onClick={openAddDialog}>
+            <Plus className="size-4" />
+            {t.channels.addChannel}
+          </Button>
+        }
+      />
 
       {/* Channel Table */}
       {loading ? (
@@ -543,14 +544,16 @@ export default function Channels() {
           <span className="ml-2 text-sm text-muted-foreground">{t.channels.loadingChannels}</span>
         </div>
       ) : channels.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-20">
-          <Network className="size-10 text-muted-foreground/30" />
-          <p className="mt-4 text-sm font-medium text-muted-foreground">{t.channels.noChannels}</p>
-          <Button variant="outline" className="mt-4" onClick={openAddDialog}>
-            <Plus className="size-4" />
-            {t.channels.addFirstChannel}
-          </Button>
-        </div>
+        <EmptyState
+          icon={Network}
+          title={t.channels.noChannels}
+          action={
+            <Button variant="outline" onClick={openAddDialog}>
+              <Plus className="size-4" />
+              {t.channels.addFirstChannel}
+            </Button>
+          }
+        />
       ) : (
         <div className="table-wrapper">
         <Table>
@@ -583,11 +586,7 @@ export default function Channels() {
                 <TableCell className="text-center">{channel.priority}</TableCell>
                 <TableCell className="text-center">{channel.weight}</TableCell>
                 <TableCell className="text-center">
-                  {channel.enabled ? (
-                    <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">{t.common.enabled}</Badge>
-                  ) : (
-                    <Badge variant="secondary">{t.common.disabled}</Badge>
-                  )}
+                  <EnabledBadge enabled={channel.enabled} enabledText={t.common.enabled} disabledText={t.common.disabled} />
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -894,7 +893,7 @@ export default function Channels() {
               {keys.map((key) => (
                 <div
                   key={key.id}
-                  className="flex items-center gap-2 rounded-md border px-3 py-2"
+                  className="flex items-center gap-2 rounded-md border px-3 py-2 hover:bg-muted/50 transition-colors duration-150"
                 >
                   {/* Key value */}
                   <code className="flex-1 truncate text-sm font-mono">

@@ -39,6 +39,8 @@ import {
 } from "@/lib/tauri";
 import { Pagination } from "@/components/ui/pagination";
 import { useLanguage } from "@/lib/i18n";
+import { PageHeader } from "@/components/page-header";
+import { HttpStatusBadge } from "@/components/status-badge";
 import { toast } from "sonner";
 import { parseIpcError } from "@/lib/tauri";
 
@@ -86,41 +88,7 @@ function prettyJson(raw: string | null): string {
   }
 }
 
-function StatusBadge({ status }: { status: number | null }) {
-  if (status === null || status === undefined) {
-    return (
-      <Badge variant="secondary" className="bg-muted text-muted-foreground">
-        N/A
-      </Badge>
-    );
-  }
-  if (status >= 200 && status < 300) {
-    return (
-      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-        {status}
-      </Badge>
-    );
-  }
-  if (status >= 400 && status < 500) {
-    return (
-      <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
-        {status}
-      </Badge>
-    );
-  }
-  if (status >= 500) {
-    return (
-      <Badge variant="destructive">
-        {status}
-      </Badge>
-    );
-  }
-  return (
-    <Badge variant="outline">
-      {status}
-    </Badge>
-  );
-}
+// StatusBadge is now imported from @/components/status-badge as HttpStatusBadge
 
 export default function RequestLogs() {
   const { t } = useLanguage();
@@ -242,43 +210,41 @@ export default function RequestLogs() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.requestLogs.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t.requestLogs.subtitle}
-          </p>
-        </div>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm" disabled={clearing}>
-              {clearing ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Trash2 />
-              )}
-              {t.requestLogs.clearLogs}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t.requestLogs.clearLogsTitle}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t.requestLogs.clearLogsDesc}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
-              <AlertDialogAction
-                variant="destructive"
-                onClick={handleClearLogs}
-              >
-                {t.requestLogs.clearAll}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+      <PageHeader
+        title={t.requestLogs.title}
+        description={t.requestLogs.subtitle}
+        actions={
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="sm" disabled={clearing}>
+                {clearing ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Trash2 />
+                )}
+                {t.requestLogs.clearLogs}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t.requestLogs.clearLogsTitle}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t.requestLogs.clearLogsDesc}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={handleClearLogs}
+                >
+                  {t.requestLogs.clearAll}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        }
+      />
 
       {/* Filter bar */}
       <div className="flex items-center gap-2">
@@ -350,7 +316,7 @@ export default function RequestLogs() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <StatusBadge status={log.status} />
+                    <HttpStatusBadge status={log.status} />
                   </TableCell>
                   <TableCell className="tabular-nums">
                     {formatLatency(log.latency_ms)}
@@ -424,7 +390,7 @@ export default function RequestLogs() {
                 <div>
                   <span className="text-muted-foreground">{t.common.status}</span>
                   <div className="mt-0.5">
-                    <StatusBadge status={selectedLog.status} />
+                    <HttpStatusBadge status={selectedLog.status} />
                   </div>
                 </div>
                 <div>
@@ -516,7 +482,7 @@ export default function RequestLogs() {
                         <Copy className="size-3.5" />
                       )}
                     </Button>
-                    <pre className="rounded-md bg-muted p-4 text-xs leading-relaxed overflow-auto whitespace-pre-wrap break-all">
+                    <pre className="code-block">
                       {prettyJson(selectedLog.request_body) || "(empty)"}
                     </pre>
                   </div>
@@ -540,7 +506,7 @@ export default function RequestLogs() {
                         )}
                       </Button>
                     )}
-                    <pre className="rounded-md bg-muted p-4 text-xs leading-relaxed overflow-auto whitespace-pre-wrap break-all">
+                    <pre className="code-block">
                       {prettyJson(selectedLog.response_body) || "(empty)"}
                     </pre>
                   </div>

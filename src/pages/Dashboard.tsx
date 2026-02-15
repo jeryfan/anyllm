@@ -38,6 +38,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useLanguage } from "@/lib/i18n";
+import { PageHeader } from "@/components/page-header";
 
 interface DashboardData {
   config: AppConfig;
@@ -53,11 +54,11 @@ function StatCardSkeleton() {
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-3">
-            <div className="h-3.5 w-20 animate-pulse rounded-md bg-muted" />
-            <div className="h-8 w-14 animate-pulse rounded-md bg-muted" />
-            <div className="h-3 w-28 animate-pulse rounded-md bg-muted" />
+            <div className="h-3.5 w-20 animate-pulse rounded-lg bg-muted" />
+            <div className="h-8 w-14 animate-pulse rounded-lg bg-muted" />
+            <div className="h-3 w-28 animate-pulse rounded-lg bg-muted" />
           </div>
-          <div className="h-11 w-11 animate-pulse rounded-xl bg-muted" />
+          <div className="h-11 w-11 animate-pulse rounded-lg bg-muted" />
         </div>
       </CardContent>
     </Card>
@@ -68,8 +69,8 @@ function ChartSkeleton() {
   return (
     <Card className="card-elevated">
       <CardHeader>
-        <div className="h-5 w-40 animate-pulse rounded-md bg-muted" />
-        <div className="h-3.5 w-56 animate-pulse rounded-md bg-muted" />
+        <div className="h-5 w-40 animate-pulse rounded-lg bg-muted" />
+        <div className="h-3.5 w-56 animate-pulse rounded-lg bg-muted" />
       </CardHeader>
       <CardContent>
         <div className="h-[300px] w-full animate-pulse rounded-lg bg-muted" />
@@ -157,12 +158,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t.dashboard.title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t.dashboard.subtitle}
-        </p>
-      </div>
+      <PageHeader title={t.dashboard.title} description={t.dashboard.subtitle} />
 
       {/* Error state */}
       {error && (
@@ -183,7 +179,7 @@ export default function Dashboard() {
               const Icon = stat.icon;
               const color = STAT_ICON_COLORS[idx];
               return (
-                <Card key={stat.title} className="card-elevated">
+                <Card key={stat.title} className="card-elevated transition-shadow duration-200 hover:shadow-md">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">

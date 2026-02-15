@@ -32,6 +32,7 @@ import { getUsageStats, parseIpcError } from "@/lib/tauri";
 import type { UsageStats as UsageStatsType } from "@/lib/tauri";
 import { useLanguage } from "@/lib/i18n";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/page-header";
 
 // ---------------------------------------------------------------------------
 // Time range options
@@ -179,27 +180,25 @@ export default function UsageStats() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.usageStats.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t.usageStats.subtitle}
-          </p>
-        </div>
-        <div className="flex items-center gap-1 rounded-lg border bg-card p-1">
-          {TIME_RANGES.map((range) => (
-            <Button
-              key={range.value}
-              variant={days === range.value ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setDays(range.value)}
-              className="text-xs"
-            >
-              {t.usageStats.nDays(range.value)}
-            </Button>
-          ))}
-        </div>
-      </div>
+      <PageHeader
+        title={t.usageStats.title}
+        description={t.usageStats.subtitle}
+        actions={
+          <div className="flex items-center gap-1 rounded-lg border bg-card p-1">
+            {TIME_RANGES.map((range) => (
+              <Button
+                key={range.value}
+                variant={days === range.value ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setDays(range.value)}
+                className="text-xs"
+              >
+                {t.usageStats.nDays(range.value)}
+              </Button>
+            ))}
+          </div>
+        }
+      />
 
       {/* Error state */}
       {error && (
@@ -218,7 +217,7 @@ export default function UsageStats() {
           Array.from({ length: 3 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : (
           <>
-            <Card className="card-elevated">
+            <Card className="card-elevated transition-shadow duration-200 hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
@@ -237,7 +236,7 @@ export default function UsageStats() {
               </CardContent>
             </Card>
 
-            <Card className="card-elevated">
+            <Card className="card-elevated transition-shadow duration-200 hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
@@ -256,7 +255,7 @@ export default function UsageStats() {
               </CardContent>
             </Card>
 
-            <Card className="card-elevated">
+            <Card className="card-elevated transition-shadow duration-200 hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
@@ -430,7 +429,7 @@ export default function UsageStats() {
                 {t.usageStats.noModelData}
               </div>
             ) : (
-              <Table>
+              <div className="table-wrapper"><Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t.requestLogs.model}</TableHead>
@@ -474,7 +473,7 @@ export default function UsageStats() {
                     );
                   })}
                 </TableBody>
-              </Table>
+              </Table></div>
             )}
           </CardContent>
         </Card>

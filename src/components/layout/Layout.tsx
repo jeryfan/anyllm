@@ -7,7 +7,7 @@ export function Layout() {
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
       <ScrollArea className="flex-1">
-        <main className="p-6">
+        <main className="px-8 py-6">
           <Outlet />
         </main>
       </ScrollArea>

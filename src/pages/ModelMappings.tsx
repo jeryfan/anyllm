@@ -47,6 +47,8 @@ import {
   type Channel,
 } from "@/lib/tauri";
 import { useLanguage } from "@/lib/i18n";
+import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
 import { toast } from "sonner";
 import { parseIpcError } from "@/lib/tauri";
 
@@ -206,18 +208,16 @@ export default function ModelMappings() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.modelMappings.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t.modelMappings.subtitle}
-          </p>
-        </div>
-        <Button onClick={openAddDialog}>
-          <Plus className="size-4" />
-          {t.modelMappings.addMapping}
-        </Button>
-      </div>
+      <PageHeader
+        title={t.modelMappings.title}
+        description={t.modelMappings.subtitle}
+        actions={
+          <Button onClick={openAddDialog}>
+            <Plus className="size-4" />
+            {t.modelMappings.addMapping}
+          </Button>
+        }
+      />
 
       {/* Content */}
       {loading ? (
@@ -225,19 +225,17 @@ export default function ModelMappings() {
           <Loader2 className="size-6 animate-spin text-muted-foreground" />
         </div>
       ) : mappings.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-20">
-          <Route className="size-10 text-muted-foreground/30" />
-          <p className="mt-4 text-sm font-medium text-muted-foreground">
-            {t.modelMappings.noMappings}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground/70">
-            {t.modelMappings.noMappingsHint}
-          </p>
-          <Button variant="outline" className="mt-4" onClick={openAddDialog}>
-            <Plus className="size-4" />
-            {t.modelMappings.addMapping}
-          </Button>
-        </div>
+        <EmptyState
+          icon={Route}
+          title={t.modelMappings.noMappings}
+          description={t.modelMappings.noMappingsHint}
+          action={
+            <Button variant="outline" onClick={openAddDialog}>
+              <Plus className="size-4" />
+              {t.modelMappings.addMapping}
+            </Button>
+          }
+        />
       ) : (
         <div className="table-wrapper">
           <Table>

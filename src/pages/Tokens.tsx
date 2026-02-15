@@ -21,6 +21,9 @@ import {
   parseIpcError,
 } from "@/lib/tauri";
 import { useLanguage } from "@/lib/i18n";
+import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
+import { StatusBadge as SharedStatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -105,26 +108,13 @@ function formatModels(models: string | null): string {
 
 function StatusBadge({ status }: { status: "active" | "disabled" | "expired" }) {
   const { t } = useLanguage();
-  switch (status) {
-    case "active":
-      return (
-        <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/25">
-          {t.tokens.active}
-        </Badge>
-      );
-    case "disabled":
-      return (
-        <Badge variant="secondary">
-          {t.common.disabled}
-        </Badge>
-      );
-    case "expired":
-      return (
-        <Badge variant="destructive">
-          {t.tokens.expired}
-        </Badge>
-      );
-  }
+  const statusMap = {
+    active: { type: "success" as const, label: t.tokens.active },
+    disabled: { type: "neutral" as const, label: t.common.disabled },
+    expired: { type: "error" as const, label: t.tokens.expired },
+  };
+  const s = statusMap[status];
+  return <SharedStatusBadge status={s.type}>{s.label}</SharedStatusBadge>;
 }
 
 // ---------------------------------------------------------------------------
@@ -591,38 +581,30 @@ export default function Tokens() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.tokens.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t.tokens.subtitle}
-          </p>
-        </div>
-        <Button onClick={() => setGenerateOpen(true)}>
-          <Plus />
-          {t.tokens.generateToken}
-        </Button>
-      </div>
-
-      {/* Table or Empty State */}
-      {tokens.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-20">
-          <KeyRound className="size-10 text-muted-foreground/30" />
-          <p className="mt-4 text-sm font-medium text-muted-foreground">
-            {t.tokens.noTokens}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground/70">
-            {t.tokens.noTokensHint}
-          </p>
-          <Button
-            variant="outline"
-            className="mt-4"
-            onClick={() => setGenerateOpen(true)}
-          >
+      <PageHeader
+        title={t.tokens.title}
+        description={t.tokens.subtitle}
+        actions={
+          <Button onClick={() => setGenerateOpen(true)}>
             <Plus />
             {t.tokens.generateToken}
           </Button>
-        </div>
+        }
+      />
+
+      {/* Table or Empty State */}
+      {tokens.length === 0 ? (
+        <EmptyState
+          icon={KeyRound}
+          title={t.tokens.noTokens}
+          description={t.tokens.noTokensHint}
+          action={
+            <Button variant="outline" onClick={() => setGenerateOpen(true)}>
+              <Plus />
+              {t.tokens.generateToken}
+            </Button>
+          }
+        />
       ) : (
         <div className="table-wrapper">
         <Table>

@@ -62,7 +62,7 @@ export function Sidebar() {
       "group relative flex flex-row items-center whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-150",
       collapsed ? "justify-center" : "gap-3",
       isActive
-        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+        ? "bg-sidebar-accent text-sidebar-accent-foreground before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-4 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
         : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
     );
 
@@ -71,7 +71,7 @@ export function Sidebar() {
       "group relative flex flex-row items-center whitespace-nowrap rounded-lg px-2 py-2 text-[13px] font-medium transition-all duration-150",
       collapsed ? "justify-center" : "gap-3",
       isActive
-        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+        ? "bg-sidebar-accent text-sidebar-accent-foreground before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-4 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
         : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
     );
 

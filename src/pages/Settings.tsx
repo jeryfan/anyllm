@@ -17,6 +17,7 @@ import type { AppConfig, ServerStatus } from "@/lib/tauri";
 import { useLanguage } from "@/lib/i18n";
 import { toast } from "sonner";
 import { parseIpcError } from "@/lib/tauri";
+import { PageHeader } from "@/components/page-header";
 
 export default function Settings() {
   const { theme, setTheme } = useTheme();
@@ -101,12 +102,7 @@ export default function Settings() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t.settings.title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t.settings.subtitle}
-        </p>
-      </div>
+      <PageHeader title={t.settings.title} description={t.settings.subtitle} />
 
       {/* Server Configuration */}
       <Card className="card-elevated">
@@ -235,7 +231,7 @@ export default function Settings() {
             <label className="text-sm font-medium text-muted-foreground">
               {t.settings.theme}
             </label>
-            <div className="flex gap-2">
+            <div className="inline-flex gap-1 rounded-lg border bg-muted/30 p-1">
               {themeOptions.map((option) => (
                 <Button
                   key={option.value}
@@ -269,7 +265,7 @@ export default function Settings() {
             <label className="text-sm font-medium text-muted-foreground">
               {t.settings.languageLabel}
             </label>
-            <div className="flex gap-2">
+            <div className="inline-flex gap-1 rounded-lg border bg-muted/30 p-1">
               <Button
                 variant={language === "en" ? "default" : "outline"}
                 size="sm"

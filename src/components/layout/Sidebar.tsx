@@ -14,6 +14,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Languages,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -57,6 +58,7 @@ export function Sidebar() {
     { to: "/tokens", icon: KeyRound, label: t.sidebar.tokens },
     { to: "/request-logs", icon: ScrollText, label: t.sidebar.requestLogs },
     { to: "/proxy", icon: Waypoints, label: t.sidebar.proxy },
+    { to: "/video-download", icon: Download, label: t.sidebar.videoDownload },
   ];
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>

@@ -645,3 +645,64 @@ export async function generateRuleWithAi(
 ): Promise<GeneratedRule> {
   return invoke<GeneratedRule>("generate_rule_with_ai", { channelId, model, prompt });
 }
+
+// === Video Download ===
+
+export interface VideoInfo {
+  title: string;
+  cover_url: string | null;
+  duration: number | null;
+  platform: string;
+  formats: VideoFormat[];
+}
+
+export interface VideoFormat {
+  quality: string;
+  url: string;
+  audio_url: string | null;
+  size: number | null;
+}
+
+export interface DownloadProgress {
+  task_id: string;
+  downloaded: number;
+  total: number | null;
+  speed: number;
+  status: DownloadStatus;
+}
+
+export type DownloadStatus =
+  | "Downloading"
+  | "Completed"
+  | "Cancelled"
+  | { Failed: string };
+
+export async function parseVideoUrl(url: string): Promise<VideoInfo> {
+  return invoke<VideoInfo>("parse_video_url", { url });
+}
+
+export async function downloadVideo(params: {
+  taskId: string;
+  title: string;
+  videoUrl: string;
+  audioUrl: string | null;
+  quality: string;
+  saveDir: string | null;
+}): Promise<string> {
+  return invoke<string>("download_video", {
+    taskId: params.taskId,
+    title: params.title,
+    videoUrl: params.videoUrl,
+    audioUrl: params.audioUrl,
+    quality: params.quality,
+    saveDir: params.saveDir,
+  });
+}
+
+export async function cancelVideoDownload(taskId: string): Promise<void> {
+  return invoke<void>("cancel_video_download", { taskId });
+}
+
+export async function openInFolder(path: string): Promise<void> {
+  return invoke<void>("open_in_folder", { path });
+}

@@ -48,6 +48,7 @@ export interface Translations {
     language: string;
     proxy: string;
     rules: string;
+    videoDownload: string;
   };
   rules: {
     title: string;
@@ -388,6 +389,33 @@ export interface Translations {
     streaming: string;
     autoRefresh: string;
   };
+  videoDownload: {
+    title: string;
+    subtitle: string;
+    urlPlaceholder: string;
+    parse: string;
+    parsing: string;
+    download: string;
+    downloading: string;
+    selectQuality: string;
+    fileName: string;
+    platform: string;
+    quality: string;
+    progress: string;
+    size: string;
+    speed: string;
+    status: string;
+    completed: string;
+    failed: string;
+    cancelled: string;
+    cancel: string;
+    openFolder: string;
+    noFormats: string;
+    unsupportedUrl: string;
+    downloadStarted: string;
+    downloadComplete: string;
+    downloadFailed: string;
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -438,6 +466,7 @@ const en: Translations = {
     language: "Language",
     proxy: "Proxy",
     rules: "Rules",
+    videoDownload: "Video Download",
   },
   rules: {
     title: "Conversion Rules",
@@ -775,6 +804,33 @@ const en: Translations = {
     streaming: "Streaming",
     autoRefresh: "Auto Refresh",
   },
+  videoDownload: {
+    title: "Video Download",
+    subtitle: "Download videos from Douyin, Bilibili and more.",
+    urlPlaceholder: "Paste video URL here (Douyin, Bilibili...)",
+    parse: "Parse",
+    parsing: "Parsing...",
+    download: "Download",
+    downloading: "Downloading...",
+    selectQuality: "Select quality",
+    fileName: "File Name",
+    platform: "Platform",
+    quality: "Quality",
+    progress: "Progress",
+    size: "Size",
+    speed: "Speed",
+    status: "Status",
+    completed: "Completed",
+    failed: "Failed",
+    cancelled: "Cancelled",
+    cancel: "Cancel",
+    openFolder: "Open Folder",
+    noFormats: "No downloadable formats found",
+    unsupportedUrl: "Unsupported URL",
+    downloadStarted: "Download started",
+    downloadComplete: "Download complete!",
+    downloadFailed: "Download failed",
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -825,6 +881,7 @@ const zh: Translations = {
     language: "语言",
     proxy: "代理",
     rules: "转换规则",
+    videoDownload: "视频下载",
   },
   rules: {
     title: "转换规则",
@@ -1161,6 +1218,33 @@ const zh: Translations = {
     filterByRule: "按规则筛选",
     streaming: "流式传输",
     autoRefresh: "自动刷新",
+  },
+  videoDownload: {
+    title: "视频下载",
+    subtitle: "从抖音、B站等平台下载视频。",
+    urlPlaceholder: "粘贴视频链接（抖音、B站...）",
+    parse: "解析",
+    parsing: "解析中...",
+    download: "下载",
+    downloading: "下载中...",
+    selectQuality: "选择清晰度",
+    fileName: "文件名",
+    platform: "平台",
+    quality: "清晰度",
+    progress: "进度",
+    size: "大小",
+    speed: "速度",
+    status: "状态",
+    completed: "已完成",
+    failed: "失败",
+    cancelled: "已取消",
+    cancel: "取消",
+    openFolder: "打开文件夹",
+    noFormats: "未找到可下载的格式",
+    unsupportedUrl: "不支持的链接",
+    downloadStarted: "开始下载",
+    downloadComplete: "下载完成！",
+    downloadFailed: "下载失败",
   },
 };
 

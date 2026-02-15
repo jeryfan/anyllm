@@ -6,6 +6,7 @@ mod modality;
 mod routing;
 mod rules;
 mod server;
+mod video;
 
 use sqlx::SqlitePool;
 use tauri::Manager;
@@ -69,6 +70,10 @@ pub fn run() {
             commands::rules::fetch_rule_store_index,
             commands::rules::install_rule_from_store,
             commands::rules::generate_rule_with_ai,
+            commands::video::parse_video_url,
+            commands::video::download_video,
+            commands::video::cancel_video_download,
+            commands::video::open_in_folder,
         ])
         .setup(|app| {
             let app_handle = app.handle().clone();
@@ -98,6 +103,7 @@ pub fn run() {
                     config: RwLock::new(config),
                 };
                 app_handle.manage(state);
+                app_handle.manage(video::downloader::DownloadManager::new());
 
                 // Start Axum HTTP server in background
                 tauri::async_runtime::spawn(async move {

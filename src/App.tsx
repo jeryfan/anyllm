@@ -9,6 +9,7 @@ import UsageStats from "@/pages/UsageStats";
 import Settings from "@/pages/Settings";
 import Proxy from "@/pages/Proxy";
 import Rules from "@/pages/Rules";
+import VideoDownload from "@/pages/VideoDownload";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="settings" element={<Settings />} />
           <Route path="proxy" element={<Proxy />} />
           <Route path="rules" element={<Rules />} />
+          <Route path="video-download" element={<VideoDownload />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,7 +1,7 @@
 [package]
 name = "omnikit"
 version = "0.1.0"
-description = "LLM API Gateway Desktop App"
+description = "A Multi-functional Toolkit Desktop App"
 authors = [""]
 edition = "2021"
 

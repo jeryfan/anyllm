@@ -35,7 +35,6 @@ export interface Translations {
     unknownError: string;
   };
   sidebar: {
-    dashboard: string;
     channels: string;
     modelMappings: string;
     tokens: string;
@@ -110,34 +109,6 @@ export interface Translations {
     modelName: string;
     selectChannel: string;
     aiGenerateSuccess: string;
-  };
-  dashboard: {
-    title: string;
-    subtitle: string;
-    totalRequests: string;
-    activeChannels: string;
-    activeTokens: string;
-    totalModels: string;
-    lastNDays: (n: number) => string;
-    enabledChannels: string;
-    enabledTokens: string;
-    modelMappingsCount: string;
-    serverStatus: string;
-    port: string;
-    version: string;
-    requestTrend: string;
-    requestTrendDesc: string;
-    noRequestData: string;
-    failedToLoad: string;
-    quickStart: string;
-    quickStartDesc: string;
-    step1: string;
-    step2: string;
-    step3: string;
-    step4: string;
-    proxyEndpoint: string;
-    availableEndpoints: string;
-    curlExample: string;
   };
   channels: {
     title: string;
@@ -464,7 +435,6 @@ const en: Translations = {
     unknownError: "Unknown error",
   },
   sidebar: {
-    dashboard: "Dashboard",
     channels: "Channels",
     modelMappings: "Model Mappings",
     tokens: "Tokens",
@@ -539,34 +509,6 @@ const en: Translations = {
     modelName: "Model",
     selectChannel: "Select a channel",
     aiGenerateSuccess: "AI generated rule filled into form",
-  },
-  dashboard: {
-    title: "Dashboard",
-    subtitle: "Overview of your API gateway status and usage.",
-    totalRequests: "Total Requests",
-    activeChannels: "Active Channels",
-    activeTokens: "Active Tokens",
-    totalModels: "Total Models",
-    lastNDays: (n: number) => `Last ${n} days`,
-    enabledChannels: "Enabled channels",
-    enabledTokens: "Enabled tokens",
-    modelMappingsCount: "Model mappings",
-    serverStatus: "Server Status",
-    port: "Port",
-    version: "Version",
-    requestTrend: "Request Trend",
-    requestTrendDesc: "Number of requests over the last 7 days",
-    noRequestData: "No request data for the selected period.",
-    failedToLoad: "Failed to load dashboard data",
-    quickStart: "Quick Start",
-    quickStartDesc: "Set up your API gateway in 4 steps.",
-    step1: "Add a channel and configure API keys",
-    step2: "Create model mappings (public name → upstream model)",
-    step3: "Generate a token for client authentication",
-    step4: "Point your client to the proxy endpoint below",
-    proxyEndpoint: "Proxy Endpoint",
-    availableEndpoints: "Available Endpoints",
-    curlExample: "Example",
   },
   channels: {
     title: "Channels",
@@ -765,10 +707,10 @@ const en: Translations = {
     about: "About",
     application: "Application",
     description: "Description",
-    descriptionText: "LLM API Gateway Desktop App",
+    descriptionText: "A Multi-functional Toolkit Desktop App",
     license: "License",
     techStack: "Tech Stack",
-    aboutText: "OmniKit converts between LLM provider API formats (OpenAI, Anthropic, Gemini, Moonshot) so you can use any client with any backend.",
+    aboutText: "OmniKit is a multi-functional toolkit that integrates LLM API gateway, generic proxy, video download and more utilities in a single desktop app.",
     saveSuccess: "Settings saved",
     restartHint: "Restart the app to apply port changes.",
     checkForUpdates: "Check for Updates",
@@ -890,7 +832,6 @@ const zh: Translations = {
     unknownError: "未知错误",
   },
   sidebar: {
-    dashboard: "仪表盘",
     channels: "渠道",
     modelMappings: "模型映射",
     tokens: "令牌",
@@ -965,34 +906,6 @@ const zh: Translations = {
     modelName: "模型",
     selectChannel: "选择渠道",
     aiGenerateSuccess: "AI 生成的规则已填充到表单",
-  },
-  dashboard: {
-    title: "仪表盘",
-    subtitle: "API 网关状态和使用概览。",
-    totalRequests: "总请求数",
-    activeChannels: "活跃渠道",
-    activeTokens: "活跃令牌",
-    totalModels: "模型总数",
-    lastNDays: (n: number) => `最近 ${n} 天`,
-    enabledChannels: "已启用渠道",
-    enabledTokens: "已启用令牌",
-    modelMappingsCount: "模型映射",
-    serverStatus: "服务器状态",
-    port: "端口",
-    version: "版本",
-    requestTrend: "请求趋势",
-    requestTrendDesc: "过去 7 天的请求数量",
-    noRequestData: "选定时间段内无请求数据。",
-    failedToLoad: "加载仪表盘数据失败",
-    quickStart: "快速开始",
-    quickStartDesc: "4 步配置您的 API 网关。",
-    step1: "添加渠道并配置 API 密钥",
-    step2: "创建模型映射（公开名称 → 上游模型）",
-    step3: "生成用于客户端认证的令牌",
-    step4: "将客户端指向下方的代理端点",
-    proxyEndpoint: "代理端点",
-    availableEndpoints: "可用端点",
-    curlExample: "示例",
   },
   channels: {
     title: "渠道",
@@ -1191,10 +1104,10 @@ const zh: Translations = {
     about: "关于",
     application: "应用",
     description: "描述",
-    descriptionText: "LLM API 网关桌面应用",
+    descriptionText: "多功能工具箱桌面应用",
     license: "开源协议",
     techStack: "技术栈",
-    aboutText: "OmniKit 实现各 LLM 供应商 API 格式互转（OpenAI、Anthropic、Gemini、Moonshot），让您可以用任意客户端对接任意后端。",
+    aboutText: "OmniKit 是一个多功能工具箱，集成了 LLM API 网关、通用代理、视频下载等实用工具。",
     saveSuccess: "设置已保存",
     restartHint: "重启应用以使端口更改生效。",
     checkForUpdates: "检查更新",

@@ -1,6 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import { Layout } from "@/components/layout/Layout";
-import Dashboard from "@/pages/Dashboard";
 import Channels from "@/pages/Channels";
 import ModelMappings from "@/pages/ModelMappings";
 import Tokens from "@/pages/Tokens";
@@ -16,7 +15,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<Navigate to="/channels" replace />} />
           <Route path="channels" element={<Channels />} />
           <Route path="model-mappings" element={<ModelMappings />} />
           <Route path="tokens" element={<Tokens />} />

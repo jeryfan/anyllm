@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router";
 import {
-  LayoutDashboard,
   Network,
   ArrowRightLeft,
   KeyRound,
@@ -51,7 +50,6 @@ export function Sidebar() {
   };
 
   const navItems = [
-    { to: "/", icon: LayoutDashboard, label: t.sidebar.dashboard },
     { to: "/channels", icon: Network, label: t.sidebar.channels },
     { to: "/rules", icon: FileCode2, label: t.sidebar.rules },
     { to: "/model-mappings", icon: ArrowRightLeft, label: t.sidebar.modelMappings },
@@ -93,7 +91,7 @@ export function Sidebar() {
             collapsed ? (
               <Tooltip key={item.to}>
                 <TooltipTrigger asChild>
-                  <NavLink to={item.to} end={item.to === "/"} className={navLinkClass}>
+                  <NavLink to={item.to} end={item.to === "/channels"} className={navLinkClass}>
                     <item.icon className="h-4 w-4 shrink-0" />
                   </NavLink>
                 </TooltipTrigger>

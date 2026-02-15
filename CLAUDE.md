@@ -1,11 +1,11 @@
 # OmniKit
 
-LLM API 中转网关桌面应用，实现各厂商 API 格式任意互转。
+多功能工具箱桌面应用，集成 LLM API 网关、视频下载等实用工具。
 
 ## 项目概要
 
 - **产品形态**: Tauri v2 桌面应用，开箱即用
-- **核心能力**: 各 LLM 厂商 API 格式任意互转 (OpenAI / Anthropic / Gemini / Moonshot)
+- **核心能力**: 多功能工具集合，包括 LLM API 格式互转 (OpenAI / Anthropic / Gemini / Moonshot)、通用代理、视频下载等
 - **设计文档**: `docs/plans/2025-02-11-omnikit-design.md`
 
 ## 技术栈

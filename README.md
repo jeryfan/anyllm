@@ -1,16 +1,16 @@
 # OmniKit
 
-A desktop LLM API gateway that translates between any provider's API format. Built with Tauri, Rust, and React.
+A multi-functional toolkit desktop app. Built with Tauri, Rust, and React.
 
 ## Features
 
-- **Any-to-Any Format Conversion** — Translate requests/responses between OpenAI, Anthropic, Gemini, Moonshot and more
-- **Real-time Streaming** — Zero-buffer chunk-by-chunk format conversion for SSE streams
+- **LLM API Gateway** — Translate requests/responses between OpenAI, Anthropic, Gemini, Moonshot and more, with real-time zero-buffer streaming
 - **Channel Management** — Configure multiple providers with priority, weight-based load balancing, and circuit breaking
 - **Model Mapping** — Map public model names to actual upstream models across providers
 - **Token Management** — Generate API keys with quota limits for external access
+- **Generic Proxy** — Forward requests to any upstream service
+- **Video Download** — Download videos from various platforms
 - **Request Logging** — Full request/response inspection for debugging
-- **Usage Analytics** — Token usage, request counts, and cost estimation dashboards
 - **Desktop App** — Powered by Tauri, runs locally with zero deployment overhead
 
 ## Supported Providers
